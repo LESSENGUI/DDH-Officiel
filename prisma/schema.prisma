@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  EDITOR
+  WRITER
+  MEDIA_MANAGER
+}
+
+enum ContentStatus {
+  DRAFT
+  REVIEW
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(WRITER)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  revisions    Revision[]
+}
+
+model Content {
+  id           String        @id @default(cuid())
+  type         String
+  slug         String        @unique
+  status       ContentStatus @default(DRAFT)
+  category     String?
+  authorId     String?
+  publishedAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  translations Translation[]
+  revisions    Revision[]
+}
+
+model Translation {
+  id        String  @id @default(cuid())
+  contentId String
+  locale    String
+  title     String
+  excerpt   String?
+  body      String?
+  metadata  Json?
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, locale])
+}
+
+model Message {
+  id           String   @id @default(cuid())
+  category     String
+  name         String
+  organization String?
+  email        String
+  phone        String?
+  subject      String
+  body         String
+  consent      Boolean
+  status       String   @default("NEW")
+  assignedTo   String?
+  internalNote String?
+  createdAt    DateTime @default(now())
+}
+
+model Revision {
+  id        String   @id @default(cuid())
+  contentId String
+  userId    String
+  snapshot  Json
+  createdAt DateTime @default(now())
+  content   Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}
