@@ -1,21 +1,23 @@
 import Link from "next/link";
-import HeroCanvas from "@/components/hero-canvas";
 
 type Breadcrumb = { label: string; href?: string };
+export type PageHeroVariant = "default" | "about" | "actions" | "publications" | "contact";
 
 export default function PageHero({
   eyebrow,
   title,
   intro,
   breadcrumbs,
+  variant = "default",
 }: {
   eyebrow: string;
   title: string;
   intro: string;
   breadcrumbs: Breadcrumb[];
+  variant?: PageHeroVariant;
 }) {
   return (
-    <section className="inner-hero page-hero">
+    <section className={`inner-hero page-hero page-hero-${variant}`}>
       <div className="page-hero-copy">
         <nav className="breadcrumbs" aria-label="Fil d’Ariane">
           {breadcrumbs.map((crumb, index) => (
@@ -30,12 +32,10 @@ export default function PageHero({
         <p>{intro}</p>
       </div>
       <div className="page-hero-art" aria-hidden="true">
-        <div className="page-hero-orbit page-hero-orbit-one" />
-        <div className="page-hero-orbit page-hero-orbit-two" />
-        <div className="page-hero-glow" />
-        <div className="page-hero-scene"><HeroCanvas /></div>
-        <span className="page-hero-monogram">DDH</span>
-        <span className="page-hero-art-caption">ENGAGEMENT · SERVICE · TRANSMISSION</span>
+        <div className={`page-hero-seal page-hero-seal-${variant}`}>
+          <span>{variant === "actions" ? "ACTION" : variant === "contact" ? "✉" : "DDH"}</span>
+          <i>{variant === "actions" ? "SERVICE PUBLIC" : variant === "contact" ? "CONTACT INSTITUTIONNEL" : "RÉPUBLIQUE DU CONGO"}</i>
+        </div>
       </div>
       <span className="page-hero-index">DOUKAGA DESTINÉE HERMELLA <i /> RÉPUBLIQUE DU CONGO</span>
     </section>

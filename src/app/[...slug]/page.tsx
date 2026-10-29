@@ -19,6 +19,12 @@ export default async function SectionPage({ params }: Props) {
       eyebrow={route.parent ? `${route.parent} · ${route.title}` : "DOUKAGA DESTINÉE HERMELLA · SITE OFFICIEL"}
       title={overview?.title ?? route.title}
       intro={overview?.intro ?? `${route.title} : informations, repères et documents associés au parcours et aux engagements de DOUKAGA Destinée Hermella.`}
+      variant={
+        group.href === "/a-propos" ? "about"
+          : group.href === "/actions" ? "actions"
+            : group.href === "/publications" ? "publications"
+              : "default"
+      }
       breadcrumbs={[
         { label: "Accueil", href: "/" },
         ...(route.parent ? [{ label: group.label, href: group.href }] : []),
